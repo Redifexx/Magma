@@ -1,0 +1,71 @@
+cmake_minimum_required(VERSION 3.20)
+
+project(MagmaFramework)
+
+# Dependencies
+find_package(glm CONFIG REQUIRED)
+find_package(SDL3 CONFIG REQUIRED)
+find_package(glad CONFIG REQUIRED)
+find_package(fmt CONFIG REQUIRED)
+find_package(freetype CONFIG REQUIRED)
+find_package(assimp CONFIG REQUIRED)
+find_package(freeimage CONFIG REQUIRED)
+find_package(tracy CONFIG REQUIRED)
+find_package(OpenGL REQUIRED)
+
+find_path(MINIAUDIO_INCLUDE_DIR "miniaudio.h" REQUIRED)
+add_library(miniaudio INTERFACE)
+target_include_directories(miniaudio INTERFACE ${MINIAUDIO_INCLUDE_DIR})
+add_library(miniaudio::miniaudio ALIAS miniaudio)
+
+add_library(imgui STATIC
+    "${CMAKE_SOURCE_DIR}/external/imgui/imgui.cpp"
+    "${CMAKE_SOURCE_DIR}/external/imgui/imgui_draw.cpp"
+    "${CMAKE_SOURCE_DIR}/external/imgui/imgui_tables.cpp"
+    "${CMAKE_SOURCE_DIR}/external/imgui/imgui_widgets.cpp"
+    "${CMAKE_SOURCE_DIR}/external/imgui/imgui_demo.cpp"
+    "${CMAKE_SOURCE_DIR}/external/imgui/backends/imgui_impl_sdl3.cpp"
+    "${CMAKE_SOURCE_DIR}/external/imgui/backends/imgui_impl_opengl3.cpp"
+)
+
+target_include_directories(imgui PUBLIC
+    "${CMAKE_SOURCE_DIR}/external/imgui"
+    "${CMAKE_SOURCE_DIR}/external/imgui/backends"
+)
+
+target_include_directories(imgui PRIVATE "${CMAKE_SOURCE_DIR}/external/imgui/backends")
+
+target_link_libraries(imgui PUBLIC SDL3::SDL3 OpenGL::GL)
+
+# Executable
+file(GLOB_RECURSE MAGMA_SOURCES "src/*.cpp")
+file(GLOB_RECURSE EXTERN_SOURCES "external/*.cpp")
+add_executable(MagmaFramework
+     ${MAGMA_SOURCES}
+     ${EXTERN_SOURCES}
+     "resources/app-icon.rc"
+)
+
+target_include_directories(MagmaFramework PUBLIC "external/imgui")
+
+# Link libraries
+target_link_libraries(MagmaFramework PUBLIC
+    glm::glm                  # Math
+    SDL3::SDL3                # Windowing/Input
+    glad::glad                # OpenGL Loader
+    fmt::fmt                  # String Formatting
+    freetype                  # Font Rendering (Often not namespaced in vcpkg)
+    assimp::assimp            # 3D Model Loading
+    freeimage::FreeImage      # Image Loading
+    miniaudio::miniaudio      # Audio
+    Tracy::TracyClient        # CPU Profiling
+)
+
+target_compile_features(MagmaFramework PRIVATE cxx_std_20)
+
+add_custom_command(TARGET MagmaFramework POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    $<TARGET_RUNTIME_DLLS:MagmaFramework>
+    $<TARGET_FILE_DIR:MagmaFramework>
+    COMMAND_EXPAND_LISTS
+)
