@@ -19,6 +19,7 @@ int main(int argc, char* argv[])
 
 	Magma::Window window;
 	if (!window.Init(1280, 720, "Magma Framework")) { return -1; }
+	window.SetVSync(0);
 
 
     IMGUI_CHECKVERSION();
