@@ -8,6 +8,7 @@
 #include <vector>
 #include "Model.h"
 #include "ShaderProgram.h"
+#include "Camera.h"
 
 namespace Magma
 {
@@ -19,10 +20,15 @@ namespace Magma
 			void OnUpdate(float dt) override;
 			void OnDetach() override;
 			void OnImGuiRender() override;
+			void OnResize(int width, int height);
 
 		private:
 			std::vector<Model*> m_Models;
 			ShaderProgram* m_ShaderProgram;
 			glm::mat4 m_CameraMatrix;
+
+			//debug temp
+			glm::mat4 m_Model;
+			Camera* m_Camera;
 	};
 }

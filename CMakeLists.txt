@@ -40,11 +40,17 @@ target_link_libraries(imgui PUBLIC SDL3::SDL3 OpenGL::GL)
 # Executable
 file(GLOB_RECURSE MAGMA_SOURCES "src/*.cpp")
 file(GLOB_RECURSE EXTERN_SOURCES "external/*.cpp")
+file(GLOB_RECURSE SHADER_SOURCES "resources/shaders/*.vert" "resources/shaders/*.frag")
 add_executable(MagmaFramework
      ${MAGMA_SOURCES}
      ${EXTERN_SOURCES}
+     ${SHADER_SOURCES}
      "resources/app-icon.rc"
 )
+
+# Inject the project root directory as a definition named "MAGMA_ROOT_DIR"
+target_compile_definitions(MagmaFramework PUBLIC "MAGMA_ROOT_DIR=\"${CMAKE_SOURCE_DIR}/\"")
+
 target_include_directories(MagmaFramework PUBLIC
     "src/include"
     "external/imgui"

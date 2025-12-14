@@ -15,6 +15,8 @@ bool Window::Init(int width, int height, const std::string& title)
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 6);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+	SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
+	SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
 
 	// Window Creation
 	m_Window = SDL_CreateWindow(
@@ -64,6 +66,18 @@ void Window::PollEvents(bool& isRunning)
 	while (SDL_PollEvent(&event))
 	{
 		ImGui_ImplSDL3_ProcessEvent(&event);
+		if (event.type == SDL_EVENT_WINDOW_RESIZED)
+		{
+			int width = event.window.data1;
+			int height = event.window.data2;
+
+			glViewport(0, 0, width, height);
+
+			if (m_ResizeCallback)
+			{
+				m_ResizeCallback(width, height);
+			}
+		}
 		if (event.type == SDL_EVENT_QUIT) isRunning = false;
 		if (event.type == SDL_EVENT_WINDOW_CLOSE_REQUESTED && event.window.windowID == SDL_GetWindowID(m_Window)) isRunning = false;
 	}

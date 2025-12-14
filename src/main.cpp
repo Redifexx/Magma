@@ -16,6 +16,7 @@
 #include "LayerStack.h"
 #include "ImGuiLayer.h"
 #include "GameLayer.h"
+#include "Camera.h"
 
 int main(int argc, char* argv[])
 {
@@ -33,22 +34,43 @@ int main(int argc, char* argv[])
 	Magma::GameLayer* gameLayer = new Magma::GameLayer();
 	layerStack.PushLayer(gameLayer);
 
+	window.SetResizeCallback([&](int width, int height)
+	{
+		gameLayer->OnResize(width, height);
+	});
+
+    // Timing
+	Uint64 performanceFrequency = SDL_GetPerformanceFrequency();
+	Uint64 lastCounter = SDL_GetPerformanceCounter();
+
+	float targetFrameTime = 1000.0f / 240.0f;
+
     // Main Loop
     bool isRunning = true;
-    while (isRunning) {
+    while (isRunning)
+	{
+		// Timing cont.
+		Uint64 currentCounter = SDL_GetPerformanceCounter();
+		Uint64 counterElapsed = currentCounter - lastCounter;
+
+		float deltaTime = (float)counterElapsed / (float)performanceFrequency;
+
+		lastCounter = currentCounter;
+
+		// Window Handling
 		window.PollEvents(isRunning);
 
         int w_, h_;
 		window.GetWindowSize(w_, h_);
         glViewport(0, 0, w_, h_);
-        glClearColor(0.39f, 0.58f, 0.93f, 1.0f);
-        glDisable(GL_CULL_FACE);
+        glClearColor(0.143f, 0.265f, 0.310f, 1.0f);
+        glEnable(GL_DEPTH_TEST);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // Game Logic
         for (Magma::Layer* layer : layerStack)
         {
-			layer->OnUpdate(0.016f); // eventually pass real delta time
+			layer->OnUpdate(deltaTime);
         }
 
 		// ImGui Rendering

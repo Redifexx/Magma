@@ -1,10 +1,21 @@
 #version 460 core
 
-// OUTPUTS: The final color written to the screen
+in vec3 Normal;
+in vec2 TexCoords;
+in mat3 TBN;
+
 layout (location = 0) out vec4 FragColor;
 
 void main()
 {
-    // Output the interpolated color with Alpha = 1.0 (Opaque)
-    FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+    // Directional Light
+    vec3 lightDirection = vec3(-0.5, -0.5, -0.5);
+    vec3 lightColor = vec3(0.8, 0.8, 0.8);
+
+    float diff = max(dot(Normal, -lightDirection), 0.0);
+    vec3 diffuse = diff * vec3(1.0, 1.0, 1.0) * lightColor;
+
+    vec3 finalLight = diffuse + vec3(0.1, 0.1, 0.1);
+
+    FragColor = vec4(finalLight, 1.0);
 }

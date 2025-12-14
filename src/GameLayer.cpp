@@ -10,9 +10,18 @@ using namespace Magma;
 void GameLayer::OnAttach()
 {
 	// Game initialization logic goes here
-	m_Models.push_back(new Model("resources/models/fundamental_cube.fbx"));
-	Shader vertexShader("resources/shaders/basic.vert", GL_VERTEX_SHADER);
-	Shader fragmentShader("resources/shaders/basic.frag", GL_FRAGMENT_SHADER);
+	m_Models.push_back(new Model("resources/models/monke.fbx"));
+
+	std::string vertpath = "resources/shaders/basic.vert";
+	std::string fragpath = "resources/shaders/basic.frag";
+
+	#ifdef MAGMA_ROOT_DIR
+		vertpath = std::string(MAGMA_ROOT_DIR) + vertpath;
+		fragpath = std::string(MAGMA_ROOT_DIR) + fragpath;
+	#endif
+
+	Shader vertexShader(vertpath, GL_VERTEX_SHADER);
+	Shader fragmentShader(fragpath, GL_FRAGMENT_SHADER);
 
 	m_ShaderProgram = new ShaderProgram();
 
@@ -24,38 +33,16 @@ void GameLayer::OnAttach()
 		return;
 	}
 
-	glm::mat4 model = glm::mat4(1.0f);
+	m_Model = glm::mat4(1.0f);
+	m_Model = glm::rotate(m_Model, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 
-
-	// 1. SETUP VARIABLES
-	float fov = 90.0f;                      // Field of View (in degrees)
-	float aspectRatio = 1280.0f / 720.0f;   // Screen Width / Height
-	float nearPlane = 0.1f;                 // Closest things you can see
-	float farPlane = 100.0f;                // Furthest things you can see
-
-	glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 10.0f);  // Camera is 3 units back
-	glm::vec3 cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f); // Looking at center
-	glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);     // "Up" is positive Y
-
-	// 2. CREATE MATRICES
-	// Projection: Handles the 3D perspective (things get smaller far away)
-	// IMPORTANT: glm::perspective expects RADIANS, so wrap fov in glm::radians()
-	glm::mat4 projection = glm::perspective(glm::radians(fov), aspectRatio, nearPlane, farPlane);
-
-	// View: Handles the Camera position/rotation
-	glm::mat4 view = glm::lookAt(cameraPos, cameraTarget, cameraUp);
-
-	// 3. COMBINE (Result = Projection * View)
-	// Order matters! It applies Right-to-Left (View happens first, then Projection)
-	glm::mat4 viewProjection = projection * view;
-
-
-	m_CameraMatrix = viewProjection;
+	m_Camera = new Camera(glm::vec3(0.0f, 0.0f, 5.0f));
+	m_Camera->SetAspectRatio(1280.0f / 720.0f);
 
 	m_ShaderProgram->Use();
 
-	m_ShaderProgram->SetUniform("u_Model", model);
-	m_ShaderProgram->SetUniform("u_ViewProjection", m_CameraMatrix);
+	m_ShaderProgram->SetUniform("u_Model", m_Model);
+	m_ShaderProgram->SetUniform("u_ViewProjection", m_Camera->GetViewProjectionMatrix());
 }
 
 void GameLayer::OnUpdate(float dt)
@@ -63,6 +50,12 @@ void GameLayer::OnUpdate(float dt)
 	// Game update logic goes here
 
 	m_ShaderProgram->Use();
+
+	m_Model = glm::rotate(m_Model, glm::radians(2.0f * dt), glm::vec3(0.0f, 0.0f, 1.0f));
+
+	m_ShaderProgram->SetUniform("u_Model", m_Model);
+	m_ShaderProgram->SetUniform("u_ViewProjection", m_Camera->GetViewProjectionMatrix());
+
 	for (Model* model : m_Models)
 	{
 		model->Draw();
@@ -79,6 +72,7 @@ void GameLayer::OnDetach()
 	}
 	m_Models.clear();
 	delete m_ShaderProgram;
+	delete m_Camera;
 }
 
 void GameLayer::OnImGuiRender()
@@ -88,4 +82,10 @@ void GameLayer::OnImGuiRender()
 	ImGui::Begin("Magma Debug Menu");
 	ImGui::Text("FPS: %.1f", ImGui::GetIO().Framerate);
 	ImGui::End();
+}
+
+void GameLayer::OnResize(int width, int height)
+{
+	if (height == 0) height = 1;
+	m_Camera->SetAspectRatio(static_cast<float>(width) / static_cast<float>(height));
 }
