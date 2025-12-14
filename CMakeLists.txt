@@ -45,8 +45,10 @@ add_executable(MagmaFramework
      ${EXTERN_SOURCES}
      "resources/app-icon.rc"
 )
-
-target_include_directories(MagmaFramework PUBLIC "external/imgui")
+target_include_directories(MagmaFramework PUBLIC
+    "src/include"
+    "external/imgui"
+)
 
 # Link libraries
 target_link_libraries(MagmaFramework PUBLIC

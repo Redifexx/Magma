@@ -12,27 +12,13 @@
 #include <iostream>
 #include <filesystem>
 
-int main(int argc, char* argv[]) {
-    if (SDL_Init(SDL_INIT_VIDEO) == false) {
-        std::cerr << "SDL failed to init: " << SDL_GetError() << std::endl;
-        return -1;
-    }
+#include "Window.h"
 
- 
-    SDL_Window* window = SDL_CreateWindow("Magma Framework", 800, 600, SDL_WINDOW_OPENGL);
-    if (!window) {
-        std::cerr << "Window failed: " << SDL_GetError() << std::endl;
-        return -1;
-    }
+int main(int argc, char* argv[])
+{
 
- 
-    SDL_GLContext context = SDL_GL_CreateContext(window);
-    
- 
-    if (!gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress)) {
-        std::cerr << "Failed to initialize Glad" << std::endl;
-        return -1;
-    }
+	Magma::Window window;
+	if (!window.Init(1280, 720, "Magma Framework")) { return -1; }
 
 
     IMGUI_CHECKVERSION();
@@ -42,18 +28,13 @@ int main(int argc, char* argv[]) {
 
     ImGui::StyleColorsDark();
 
-    ImGui_ImplSDL3_InitForOpenGL(window, context);
+    ImGui_ImplSDL3_InitForOpenGL(window.GetSDLWindow(), window.GetGLContext());
     ImGui_ImplOpenGL3_Init("#version 130");
 
     // Loop
     bool running = true;
     while (running) {
-        SDL_Event event;
-        while (SDL_PollEvent(&event)) {
-            ImGui_ImplSDL3_ProcessEvent(&event);
-            if (event.type == SDL_EVENT_QUIT) running = false;
-            if (event.type == SDL_EVENT_WINDOW_CLOSE_REQUESTED && event.window.windowID == SDL_GetWindowID(window)) running = false;
-        }
+		window.PollEvents(running);
 
         glViewport(0, 0, 1280, 720);
         glClearColor(0.39f, 0.58f, 0.93f, 1.0f);
@@ -72,16 +53,14 @@ int main(int argc, char* argv[]) {
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-        SDL_GL_SwapWindow(window);
+        window.SwapBuffers();
     }
 
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplSDL3_Shutdown();
     ImGui::DestroyContext();
 
-    SDL_GL_DestroyContext(context);
-    SDL_DestroyWindow(window);
-    SDL_Quit();
+    window.Shutdown();
 
     return 0;
 }
