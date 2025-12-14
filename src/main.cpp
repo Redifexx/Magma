@@ -16,6 +16,7 @@
 #include "LayerStack.h"
 #include "ImGuiLayer.h"
 #include "GameLayer.h"
+#include "Model.h"
 
 int main(int argc, char* argv[])
 {
