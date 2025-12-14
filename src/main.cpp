@@ -13,53 +13,53 @@
 #include <filesystem>
 
 #include "Window.h"
+#include "LayerStack.h"
+#include "ImGuiLayer.h"
+#include "GameLayer.h"
 
 int main(int argc, char* argv[])
 {
-
+    // Window Creation
 	Magma::Window window;
 	if (!window.Init(1280, 720, "Magma Framework")) { return -1; }
 	window.SetVSync(0);
 
+    // Layers
+	Magma::LayerStack layerStack;
 
-    IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
-    ImGuiIO& io = ImGui::GetIO(); (void)io;
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+	Magma::ImGuiLayer* imGuiLayer = new Magma::ImGuiLayer(window.GetSDLWindow(), window.GetGLContext());
+	layerStack.PushLayer(imGuiLayer);
 
-    ImGui::StyleColorsDark();
+	Magma::GameLayer* gameLayer = new Magma::GameLayer();
+	layerStack.PushLayer(gameLayer);
 
-    ImGui_ImplSDL3_InitForOpenGL(window.GetSDLWindow(), window.GetGLContext());
-    ImGui_ImplOpenGL3_Init("#version 130");
+    // Main Loop
+    bool isRunning = true;
+    while (isRunning) {
+		window.PollEvents(isRunning);
 
-    // Loop
-    bool running = true;
-    while (running) {
-		window.PollEvents(running);
-
-        glViewport(0, 0, 1280, 720);
+        int w_, h_;
+		window.GetWindowSize(w_, h_);
+        glViewport(0, 0, w_, h_);
         glClearColor(0.39f, 0.58f, 0.93f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplSDL3_NewFrame();
-        ImGui::NewFrame();
+        // Game Logic
+        for (Magma::Layer* layer : layerStack)
+        {
+			layer->OnUpdate(0.016f); // eventually pass real delta time
+        }
 
-        ImGui::Begin("Magma Settings");
-        static float speed = 5.0f;
-        ImGui::SliderFloat("Player Speed", &speed, 0.0f, 100.0f);
-        ImGui::Text("FPS: %.1f", ImGui::GetIO().Framerate);
-        ImGui::End();
-
-        ImGui::Render();
-        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+		// ImGui Rendering
+		imGuiLayer->Begin();
+        for (Magma::Layer* layer : layerStack)
+        {
+			layer->OnImGuiRender();
+        }
+		imGuiLayer->End();
 
         window.SwapBuffers();
     }
-
-    ImGui_ImplOpenGL3_Shutdown();
-    ImGui_ImplSDL3_Shutdown();
-    ImGui::DestroyContext();
 
     window.Shutdown();
 

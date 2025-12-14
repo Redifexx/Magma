@@ -2,8 +2,6 @@
 
 using namespace Magma;
 
-ImGuiLayer()::ImGuiLayer() : Layer("ImGuiLayer") {}
-
 void ImGuiLayer::OnAttach()
 {
 	IMGUI_CHECKVERSION();
@@ -11,6 +9,9 @@ void ImGuiLayer::OnAttach()
 	ImGuiIO& io = ImGui::GetIO(); (void)io;
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 	ImGui::StyleColorsDark();
+	ImGui_ImplSDL3_InitForOpenGL(m_Window, m_GLContext);
+	ImGui_ImplOpenGL3_Init("#version 130");
+	std::printf("ImGuiLayer attached.\n");
 }
 
 void ImGuiLayer::OnDetach()
@@ -18,12 +19,6 @@ void ImGuiLayer::OnDetach()
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplSDL3_Shutdown();
 	ImGui::DestroyContext();
-}
-
-void ImGuiLayer::Init(SDL_Window* window, SDL_GLContext* glContext)
-{
-	ImGui_ImplSDL3_InitForOpenGL(window, glContext);
-	ImGui_ImplOpenGL3_Init("#version 130");
 }
 
 void ImGuiLayer::Begin()
