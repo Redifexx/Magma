@@ -11,7 +11,6 @@ void ImGuiLayer::OnAttach()
 	ImGui::StyleColorsDark();
 	ImGui_ImplSDL3_InitForOpenGL(m_Window, m_GLContext);
 	ImGui_ImplOpenGL3_Init("#version 130");
-	std::printf("ImGuiLayer attached.\n");
 }
 
 void ImGuiLayer::OnDetach()

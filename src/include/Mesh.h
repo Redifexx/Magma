@@ -1,5 +1,7 @@
 #pragma once
+
 #include <glm/glm.hpp>
+#include <glad/glad.h>
 #include <vector>
 
 namespace Magma
@@ -16,8 +18,7 @@ namespace Magma
 	class Mesh
 	{
 		public:
-			Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices) :
-				m_Vertices(vertices), m_Indices(indices) {}
+			Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices);
 
 			void Draw() const;
 		private:

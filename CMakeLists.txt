@@ -66,8 +66,7 @@ target_link_libraries(MagmaFramework PUBLIC
 target_compile_features(MagmaFramework PRIVATE cxx_std_20)
 
 add_custom_command(TARGET MagmaFramework POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-    $<TARGET_RUNTIME_DLLS:MagmaFramework>
-    $<TARGET_FILE_DIR:MagmaFramework>
-    COMMAND_EXPAND_LISTS
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    "${CMAKE_SOURCE_DIR}/resources"
+    "$<TARGET_FILE_DIR:MagmaFramework>/resources"
 )

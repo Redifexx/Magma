@@ -6,6 +6,7 @@
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
+#include <stdexcept>
 
 namespace Magma
 {
@@ -20,6 +21,6 @@ namespace Magma
 			std::string m_Directory;
 
 			void ProcessNode(aiNode* node, const aiScene* scene);
-			void ProcessMesh(aiMesh* mesh, const aiScene* scene);
+			Mesh ProcessMesh(aiMesh* mesh, const aiScene* scene);
 	};
 }

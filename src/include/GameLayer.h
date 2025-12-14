@@ -12,6 +12,8 @@ namespace Magma
 	class GameLayer : public Layer
 	{
 		public:
+
+			void OnAttach() override;
 			void OnUpdate(float dt) override;
 			void OnImGuiRender() override;
 	};
