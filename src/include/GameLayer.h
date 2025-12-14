@@ -5,6 +5,9 @@
 #include "imgui.h"
 #include <backends/imgui_impl_opengl3.h>
 #include <backends/imgui_impl_sdl3.h>
+#include <vector>
+#include "Model.h"
+#include "ShaderProgram.h"
 
 namespace Magma
 {
@@ -12,9 +15,14 @@ namespace Magma
 	class GameLayer : public Layer
 	{
 		public:
-
 			void OnAttach() override;
 			void OnUpdate(float dt) override;
+			void OnDetach() override;
 			void OnImGuiRender() override;
+
+		private:
+			std::vector<Model*> m_Models;
+			ShaderProgram* m_ShaderProgram;
+			glm::mat4 m_CameraMatrix;
 	};
 }

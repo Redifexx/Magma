@@ -42,7 +42,8 @@ int main(int argc, char* argv[])
 		window.GetWindowSize(w_, h_);
         glViewport(0, 0, w_, h_);
         glClearColor(0.39f, 0.58f, 0.93f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
+        glDisable(GL_CULL_FACE);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // Game Logic
         for (Magma::Layer* layer : layerStack)
