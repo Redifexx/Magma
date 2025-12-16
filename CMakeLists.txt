@@ -26,7 +26,7 @@ add_library(imgui STATIC
     "${CMAKE_SOURCE_DIR}/external/imgui/imgui_demo.cpp"
     "${CMAKE_SOURCE_DIR}/external/imgui/backends/imgui_impl_sdl3.cpp"
     "${CMAKE_SOURCE_DIR}/external/imgui/backends/imgui_impl_opengl3.cpp"
-)
+ "src/include/Texture.h")
 
 target_include_directories(imgui PUBLIC
     "${CMAKE_SOURCE_DIR}/external/imgui"

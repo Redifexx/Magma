@@ -3,6 +3,7 @@
 #include "Model.h"
 #include "ShaderProgram.h"
 #include "Shader.h"
+#include "Texture.h"
 #include <filesystem>
 
 using namespace Magma;
@@ -10,7 +11,7 @@ using namespace Magma;
 void GameLayer::OnAttach()
 {
 	// Game initialization logic goes here
-	m_Models.push_back(new Model("resources/models/monke.fbx"));
+	m_Models.push_back(new Model("resources/models/elephant.fbx"));
 
 	std::string vertpath = "resources/shaders/basic.vert";
 	std::string fragpath = "resources/shaders/basic.frag";
@@ -33,33 +34,100 @@ void GameLayer::OnAttach()
 		return;
 	}
 
-	m_Model = glm::mat4(1.0f);
-	m_Model = glm::rotate(m_Model, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+	m_Texture = new Texture("resources/textures/elephant.jpg");
+	m_Texture->TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	m_Texture->TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+	m_ModelMatrix = glm::mat4(1.0f);
+	m_ModelMatrix = glm::translate(m_ModelMatrix, glm::vec3(0.0f, -3.0f, 0.0f));
+	m_ModelMatrix = glm::scale(m_ModelMatrix, glm::vec3(50.0f, 50.0f, 50.0f));
+	m_ModelMatrix = glm::rotate(m_ModelMatrix, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 
 	m_Camera = new Camera(glm::vec3(0.0f, 0.0f, 5.0f));
-	m_Camera->SetAspectRatio(1280.0f / 720.0f);
+	m_Camera->SetPerspective(true);
 
 	m_ShaderProgram->Use();
 
-	m_ShaderProgram->SetUniform("u_Model", m_Model);
+	m_ShaderProgram->SetUniform("u_Model", m_ModelMatrix);
 	m_ShaderProgram->SetUniform("u_ViewProjection", m_Camera->GetViewProjectionMatrix());
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, m_Texture->GetID());
+	m_ShaderProgram->SetUniform("u_Texture", 0);
+
+	// Input
+	Magma::Input::Init();
 }
 
 void GameLayer::OnUpdate(float dt)
 {
 	// Game update logic goes here
 
+
+	// Basic Input
+
+	if (Magma::Input::IsKeyHeld(SDL_SCANCODE_W))
+	{
+		m_Camera->SetPosition(m_Camera->GetPosition() + m_Camera->GetFront() * 5.0f * dt);
+	}
+
+	if (Magma::Input::IsKeyHeld(SDL_SCANCODE_S))
+	{
+		m_Camera->SetPosition(m_Camera->GetPosition() + m_Camera->GetFront() * -5.0f * dt);
+	}
+
+	if (Magma::Input::IsKeyHeld(SDL_SCANCODE_A))
+	{
+		m_Camera->SetPosition(m_Camera->GetPosition() + m_Camera->GetRight() * -5.0f * dt);
+	}
+
+	if (Magma::Input::IsKeyHeld(SDL_SCANCODE_D))
+	{
+		m_Camera->SetPosition(m_Camera->GetPosition() + m_Camera->GetRight() * 5.0f * dt);
+	}
+
+	if (Magma::Input::IsKeyHeld(SDL_SCANCODE_E))
+	{
+		m_Camera->SetPosition(m_Camera->GetPosition() + m_Camera->GetUp() * 5.0f * dt);
+	}
+
+	if (Magma::Input::IsKeyHeld(SDL_SCANCODE_Q))
+	{
+		m_Camera->SetPosition(m_Camera->GetPosition() + m_Camera->GetUp() * -5.0f * dt);
+	}
+
+	if (SDL_GetWindowRelativeMouseMode(m_Window))
+	{
+		float mouseX = Magma::Input::GetMouseDelta().x;
+		float mouseY = Magma::Input::GetMouseDelta().y;
+
+		float camYaw = m_Camera->GetYaw() + mouseX * 0.1f;
+		float camPitch = m_Camera->GetPitch() - mouseY * 0.1f;
+		camPitch = glm::clamp(camPitch, -89.0f, 89.0f);
+		m_Camera->SetYaw(camYaw);
+		m_Camera->SetPitch(camPitch);
+		m_Camera->UpdateCameraVectors();
+	}
+
+	// Render Logic
+
 	m_ShaderProgram->Use();
 
-	m_Model = glm::rotate(m_Model, glm::radians(2.0f * dt), glm::vec3(0.0f, 0.0f, 1.0f));
+	m_ModelMatrix = glm::rotate(m_ModelMatrix, glm::radians(20.0f * dt), glm::vec3(0.0f, 0.0f, 1.0f));
 
-	m_ShaderProgram->SetUniform("u_Model", m_Model);
+	m_ShaderProgram->SetUniform("u_Model", m_ModelMatrix);
 	m_ShaderProgram->SetUniform("u_ViewProjection", m_Camera->GetViewProjectionMatrix());
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, m_Texture->GetID());
+	m_ShaderProgram->SetUniform("u_Texture", 0);
 
 	for (Model* model : m_Models)
 	{
 		model->Draw();
 	}
+
+	Magma::Input::Update();
 }
 
 void GameLayer::OnDetach()
@@ -73,6 +141,7 @@ void GameLayer::OnDetach()
 	m_Models.clear();
 	delete m_ShaderProgram;
 	delete m_Camera;
+	delete m_Texture;
 }
 
 void GameLayer::OnImGuiRender()

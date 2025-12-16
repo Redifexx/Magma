@@ -17,6 +17,7 @@
 #include "ImGuiLayer.h"
 #include "GameLayer.h"
 #include "Camera.h"
+#include "Input.h"
 
 int main(int argc, char* argv[])
 {
@@ -38,6 +39,9 @@ int main(int argc, char* argv[])
 	{
 		gameLayer->OnResize(width, height);
 	});
+
+	gameLayer->OnResize(1280, 720);
+	gameLayer->SetWindow(window.GetSDLWindow());
 
     // Timing
 	Uint64 performanceFrequency = SDL_GetPerformanceFrequency();
@@ -66,6 +70,17 @@ int main(int argc, char* argv[])
         glClearColor(0.143f, 0.265f, 0.310f, 1.0f);
         glEnable(GL_DEPTH_TEST);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		// Setup Window Cursor Lock
+		if (Magma::Input::IsMouseButtonPressed(SDL_BUTTON_LEFT))
+		{
+			SDL_SetWindowRelativeMouseMode(window.GetSDLWindow(), true);
+		}
+
+		if (Magma::Input::IsKeyPressed(SDL_SCANCODE_ESCAPE))
+		{
+			SDL_SetWindowRelativeMouseMode(window.GetSDLWindow(), false);
+		}
 
         // Game Logic
         for (Magma::Layer* layer : layerStack)
