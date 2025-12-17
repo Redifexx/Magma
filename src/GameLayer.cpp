@@ -5,13 +5,14 @@
 #include "Shader.h"
 #include "Texture.h"
 #include <filesystem>
+#include <AudioEngine.h>
 
 using namespace Magma;
 
 void GameLayer::OnAttach()
 {
 	// Game initialization logic goes here
-	m_Models.push_back(new Model("resources/models/elephant.fbx"));
+	m_Models.push_back(new Model("resources/models/radio.fbx"));
 
 	std::string vertpath = "resources/shaders/basic.vert";
 	std::string fragpath = "resources/shaders/basic.frag";
@@ -34,14 +35,14 @@ void GameLayer::OnAttach()
 		return;
 	}
 
-	m_Texture = new Texture("resources/textures/elephant.jpg");
+	m_Texture = new Texture("resources/textures/radio.png");
 	m_Texture->TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	m_Texture->TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
 	m_ModelMatrix = glm::mat4(1.0f);
-	m_ModelMatrix = glm::translate(m_ModelMatrix, glm::vec3(0.0f, -3.0f, 0.0f));
-	m_ModelMatrix = glm::scale(m_ModelMatrix, glm::vec3(50.0f, 50.0f, 50.0f));
-	m_ModelMatrix = glm::rotate(m_ModelMatrix, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+	//m_ModelMatrix = glm::translate(m_ModelMatrix, glm::vec3(0.0f, -3.0f, 0.0f));
+	m_ModelMatrix = glm::scale(m_ModelMatrix, glm::vec3(0.1f, 0.1f, 0.1f));
+	m_ModelMatrix = glm::rotate(m_ModelMatrix, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 
 	m_Camera = new Camera(glm::vec3(0.0f, 0.0f, 5.0f));
 	m_Camera->SetPerspective(true);
@@ -56,7 +57,16 @@ void GameLayer::OnAttach()
 	m_ShaderProgram->SetUniform("u_Texture", 0);
 
 	// Input
-	Magma::Input::Init();
+	//Magma::Input::Init();
+
+	// Audio
+	//Magma::AudioEngine::Init();
+
+	std::string audiopath = "resources/audio/pickitup.mp3";
+
+	#ifdef MAGMA_ROOT_DIR
+		audiopath = std::string(MAGMA_ROOT_DIR) + audiopath;
+	#endif
 }
 
 void GameLayer::OnUpdate(float dt)
@@ -96,6 +106,24 @@ void GameLayer::OnUpdate(float dt)
 		m_Camera->SetPosition(m_Camera->GetPosition() + m_Camera->GetUp() * -5.0f * dt);
 	}
 
+	if (Magma::Input::IsKeyPressed(SDL_SCANCODE_F))
+	{
+		/*
+		Magma::AudioEngine::PlayGlobal(
+			"R:/Code/Magma/resources/audio/pickitup.mp3", 1.0f, false
+		);
+		*/
+
+		Magma::AudioEngine::PlayAtLocation(
+			"resources/audio/pickitup.mp3", glm::vec3(0.0f, 0.0f, 0.0f), 1.0f, true
+		);
+	}
+
+	if (Magma::Input::IsKeyPressed(SDL_SCANCODE_G))
+	{
+		Magma::AudioEngine::StopGlobal();
+	}
+
 	if (SDL_GetWindowRelativeMouseMode(m_Window))
 	{
 		float mouseX = Magma::Input::GetMouseDelta().x;
@@ -109,8 +137,10 @@ void GameLayer::OnUpdate(float dt)
 		m_Camera->UpdateCameraVectors();
 	}
 
-	// Render Logic
+	// Audio Listener Update
+	Magma::AudioEngine::UpdateListener(m_Camera->GetPosition(), m_Camera->GetFront(), m_Camera->GetUp());
 
+	// Render Logic
 	m_ShaderProgram->Use();
 
 	m_ModelMatrix = glm::rotate(m_ModelMatrix, glm::radians(20.0f * dt), glm::vec3(0.0f, 0.0f, 1.0f));
@@ -128,6 +158,7 @@ void GameLayer::OnUpdate(float dt)
 	}
 
 	Magma::Input::Update();
+	Magma::AudioEngine::UpdateActiveSounds();
 }
 
 void GameLayer::OnDetach()

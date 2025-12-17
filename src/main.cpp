@@ -5,9 +5,6 @@
 #include <backends/imgui_impl_opengl3.h>
 #include <backends/imgui_impl_sdl3.h>
 
-#define MINIAUDIO_IMPLEMENTATION
-#include <miniaudio.h>
-
 #include <glm/glm.hpp>
 #include <iostream>
 #include <filesystem>
@@ -18,6 +15,7 @@
 #include "GameLayer.h"
 #include "Camera.h"
 #include "Input.h"
+#include <AudioEngine.h>
 
 int main(int argc, char* argv[])
 {
@@ -48,6 +46,12 @@ int main(int argc, char* argv[])
 	Uint64 lastCounter = SDL_GetPerformanceCounter();
 
 	float targetFrameTime = 1000.0f / 240.0f;
+
+	// Input
+	Magma::Input::Init();
+
+	// Audio
+	Magma::AudioEngine::Init();
 
     // Main Loop
     bool isRunning = true;
