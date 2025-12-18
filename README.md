@@ -20,7 +20,12 @@ into various game related projects of mine.
 
 ## How to Use
 
-Install Visual Studio 2022+, clone the repository, then open VS Solution. Build settings can be found in CMakeLists.txt.
+1. Clone Repository, preferably when first opening Visual Studio
+2. With the folder opened in VS, go to File -> Open -> CMake Project
+3. Navigate to the repository's CMakeLists.txt and select it
+4. You're all set! Give some time for the CMake build system to load before starting the application.
+
+Build settings can be found in CMakeLists.txt.
 
 
 ## Documentation
