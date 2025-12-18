@@ -37,7 +37,6 @@ namespace Magma
 	}
 
 	// Keyboard
-
 	bool Input::IsKeyHeld(SDL_Scancode key)
 	{
 		return m_CurrentKeyState[key];
@@ -54,7 +53,6 @@ namespace Magma
 	}
 
 	// Mouse
-
 	bool Input::IsMouseButtonHeld(Uint8 button)
 	{
 		return (m_CurrentMouseState & SDL_BUTTON_MASK(button));

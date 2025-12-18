@@ -60,6 +60,7 @@ void Window::SwapBuffers()
 	SDL_GL_SwapWindow(m_Window);
 }
 
+// SDL callbacks are handled here
 void Window::PollEvents(bool& isRunning)
 {
 	SDL_Event event;
@@ -78,8 +79,12 @@ void Window::PollEvents(bool& isRunning)
 				m_ResizeCallback(width, height);
 			}
 		}
-		if (event.type == SDL_EVENT_QUIT) isRunning = false;
-		if (event.type == SDL_EVENT_WINDOW_CLOSE_REQUESTED && event.window.windowID == SDL_GetWindowID(m_Window)) isRunning = false;
+
+		if (event.type == SDL_EVENT_QUIT)
+			isRunning = false;
+
+		if (event.type == SDL_EVENT_WINDOW_CLOSE_REQUESTED && event.window.windowID == SDL_GetWindowID(m_Window))
+			isRunning = false;
 	}
 }
 

@@ -6,7 +6,11 @@ Model::Model(const std::string& filepath)
 {
 	Assimp::Importer importer;
 
-	const aiScene* scene = importer.ReadFile(filepath, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
+	const aiScene* scene = importer.ReadFile(filepath,
+		aiProcess_Triangulate |
+		aiProcess_FlipUVs |
+		aiProcess_GenSmoothNormals |
+		aiProcess_CalcTangentSpace);
 	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
 	{
 		throw std::runtime_error("ERROR::ASSIMP::" + std::string(importer.GetErrorString()));
@@ -56,13 +60,15 @@ Mesh Model::ProcessMesh(aiMesh* mesh, const aiScene* scene)
 			mesh->mVertices[i].y,
 			mesh->mVertices[i].z
 		);
+
 		vertex.Normal = glm::vec3(
 			mesh->mNormals[i].x,
 			mesh->mNormals[i].y,
 			mesh->mNormals[i].z
 		);
 
-		if (mesh->mTextureCoords[0])
+
+		if (mesh->HasTextureCoords(0))
 		{
 			vertex.TexCoords = glm::vec2(
 				mesh->mTextureCoords[0][i].x,
@@ -74,17 +80,25 @@ Mesh Model::ProcessMesh(aiMesh* mesh, const aiScene* scene)
 			vertex.TexCoords = glm::vec2(0.0f, 0.0f);
 		}
 
-		vertex.Tangent = glm::vec3(
-			mesh->mTangents[i].x,
-			mesh->mTangents[i].y,
-			mesh->mTangents[i].z
-		);
+		if (mesh->HasTangentsAndBitangents())
+		{
+			vertex.Tangent = glm::vec3(
+				mesh->mTangents[i].x,
+				mesh->mTangents[i].y,
+				mesh->mTangents[i].z
+			);
 
-		vertex.Bitangent = glm::vec3(
-			mesh->mBitangents[i].x,
-			mesh->mBitangents[i].y,
-			mesh->mBitangents[i].z
-		);
+			vertex.Bitangent = glm::vec3(
+				mesh->mBitangents[i].x,
+				mesh->mBitangents[i].y,
+				mesh->mBitangents[i].z
+			);
+		}
+		else
+		{
+			vertex.Tangent = glm::vec3(0.0f);
+			vertex.Bitangent = glm::vec3(0.0f);
+		}
 
 		vertices.push_back(vertex);
 	}

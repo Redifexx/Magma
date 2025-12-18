@@ -2,6 +2,8 @@
 
 #include <glm/glm.hpp>
 
+// Holds the data representation of a Camera
+// Just a big ball of data to be used outside of this class
 namespace Magma
 {
 	class Camera

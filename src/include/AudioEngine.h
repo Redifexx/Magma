@@ -8,6 +8,8 @@
 struct ma_engine;
 struct ma_sound;
 
+// Uses miniaudio lib to play audio
+// Can easily be swapped with another audio lib!
 namespace Magma
 {
 	class AudioEngine

@@ -3,6 +3,8 @@
 #include <SDL3/SDL.h>
 #include <glm/glm.hpp>
 
+// Uses SDL to track input
+// currently only implemented for Keyboard and Mouse
 namespace Magma
 {
 	class Input

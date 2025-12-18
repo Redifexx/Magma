@@ -31,8 +31,8 @@ namespace Magma
 			std::vector<Model*> m_Models;
 			ShaderProgram* m_ShaderProgram;
 
-			// Testing variables
-			// Typically these would be part of a user defined Scene or Renderer class
+			// Demo Variables
+			// These should ideally be part of another class or system
 			glm::mat4 m_ModelMatrix;
 			Camera* m_Camera;
 			Texture* m_Texture;

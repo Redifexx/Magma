@@ -10,7 +10,7 @@ layout (location = 0) out vec4 FragColor;
 
 void main()
 {
-    // Directional Light
+    // Simple Directional Light Setup, diffuse only
     vec3 lightDirection = vec3(-0.5, -0.5, -0.5);
     vec3 lightColor = vec3(0.8, 0.8, 0.8);
 

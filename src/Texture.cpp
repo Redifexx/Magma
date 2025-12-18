@@ -61,6 +61,7 @@ Texture::Texture(const char* filepath, bool mipmaps)
 	{
 		std::cout << "Failed to process image: " << filepath << std::endl;
 		glDeleteTextures(1, &textureID);
+		m_TextureID = -1;
 		return;
 	}
 
