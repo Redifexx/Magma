@@ -15,7 +15,7 @@ then this project is for you!
 
 ## Free + Open Source
 
-Magma is ALL YOURS. It has the MIT license so feel free to do with it as you please. My intention was to have a repository that I can fork
+Magma is ALL YOURS. It has the MIT license so feel free to do with it as you please. My intention was to have a repository that I can copy
 into various game related projects of mine.
 
 ## How to Use
