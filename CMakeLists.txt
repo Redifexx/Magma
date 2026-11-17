@@ -2,6 +2,9 @@ cmake_minimum_required(VERSION 3.20)
 
 project(MagmaFramework)
 
+#set(VCPKG_HOST_TRIPLET "x64-win-llvm")
+#set(VCPKG_TARGET_TRIPLET "x64-win-llvm")
+
 # Dependencies
 find_package(glm CONFIG REQUIRED)
 find_package(SDL3 CONFIG REQUIRED)

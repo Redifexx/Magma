@@ -1,0 +1,19 @@
+{
+  "packages": [
+{
+  "SPDXID" : "SPDXRef-resource-0",
+  "checksums" : 
+  [
+    {
+      "algorithm" : "SHA512",
+      "checksumValue" : "72061902812b3f5b27afb32c513fc337db4149b8a6e51cbfe497109f88145751484093990bb1b20b4eec2b9f621406690030401b2a51c9368eb481f00225cd24"
+    }
+  ],
+  "copyrightText" : "NOASSERTION",
+  "downloadLocation" : "git+https://github.com/nemtrif/utfcpp@v4.1.1",
+  "licenseConcluded" : "NOASSERTION",
+  "licenseDeclared" : "NOASSERTION",
+  "name" : "nemtrif/utfcpp"
+}
+  ]
+}

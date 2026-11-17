@@ -33,6 +33,9 @@ void GameLayer::OnAttach()
 
 	m_ShaderProgram = new ShaderProgram();
 
+	vertexShader.Compile();
+	fragmentShader.Compile();
+
 	m_ShaderProgram->AttachShader(vertexShader);
 	m_ShaderProgram->AttachShader(fragmentShader);
 	if (!m_ShaderProgram->Link())

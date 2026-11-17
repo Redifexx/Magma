@@ -1,0 +1,19 @@
+{
+  "packages": [
+{
+  "SPDXID" : "SPDXRef-resource-0",
+  "checksums" : 
+  [
+    {
+      "algorithm" : "SHA512",
+      "checksumValue" : "f3639e3964ea8ef41ce684eb1b764ece79f64a15ecae068846c5bc0853780e39f600776027d8843e6a3f47988daf067a164161a58f76ec6de13027ae1e473bfb"
+    }
+  ],
+  "copyrightText" : "NOASSERTION",
+  "downloadLocation" : "git+https://github.com/assimp/assimp@v6.0.4",
+  "licenseConcluded" : "NOASSERTION",
+  "licenseDeclared" : "NOASSERTION",
+  "name" : "assimp/assimp"
+}
+  ]
+}

@@ -1,15 +1,16 @@
 {
   "name": "magma-framework",
   "version-string": "0.1.0",
+  "builtin-baseline": "9e593bb18ea69cc5095e012465dcd675a822ed0d",
   "dependencies": [
-    "glm",
-    "sdl3",
-    "glad",
-    "fmt",
-    "freetype",
     "assimp",
+    "fmt",
     "freeimage",
+    "freetype",
+    "glad",
+    "glm",
     "miniaudio",
+    "sdl3",
     "tracy"
   ]
 }
